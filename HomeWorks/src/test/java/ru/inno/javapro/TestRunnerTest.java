@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.inno.javapro.classes.TestClassDoubleAnnotations;
 import ru.inno.javapro.classes.TestClassHappyPath;
+import ru.inno.javapro.classes.TestClassNonStaticAfterAnnotations;
 import ru.inno.javapro.homework1.exceptions.TestRunnerException;
 
 import java.io.ByteArrayOutputStream;
@@ -22,13 +23,19 @@ public class TestRunnerTest {
     }
 
     @Test
-    @DisplayName("При неверно аннотированных методах возникает ошибка")
-    void shouldGetErrorOnWrongAnnotation() {
+    @DisplayName("Возникает ошибка когда Класс содержит две аннотации BeforeSuite")
+    void shouldGetErrorOnTwoAfterSuite() {
         assertThatThrownBy(() -> TestRunner.runTests(TestClassDoubleAnnotations.class))
                 .isInstanceOf(TestRunnerException.class)
-                .hasMessageContaining("[Класс TestClassDoubleAnnotations содержит 2 методов аннотированных BeforeSuite, " +
-                        "допустимое количество не более 1, Класс TestClassDoubleAnnotations содержит 2 методов аннотированных AfterSuite, " +
-                        "допустимое количество не более 1, Класс TestClassDoubleAnnotations содержит не статические методы, аннотированные AfterSuite]");
+                .hasMessageContaining("Более одного метода аннотированы BeforeSuite");
+    }
+
+    @Test
+    @DisplayName("Возникает ошибка когда Класс содержит не статическую AfterSuite")
+    void shouldGetErrorOnNonStaticAfterSuite() {
+        assertThatThrownBy(() -> TestRunner.runTests(TestClassNonStaticAfterAnnotations.class))
+                .isInstanceOf(TestRunnerException.class)
+                .hasMessageContaining("метод аннотированный AfterSuite не static");
     }
 
     @Test
