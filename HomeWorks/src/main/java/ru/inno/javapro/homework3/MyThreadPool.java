@@ -1,7 +1,7 @@
 package ru.inno.javapro.homework3;
 
 import java.util.LinkedList;
-import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Попробуйте реализовать собственный пул потоков.
@@ -18,36 +18,43 @@ import java.util.concurrent.Executor;
  * Дополнительно можно добавить метод awaitTermination() без таймаута,
  * работающий аналогично стандартным пулам потоков
  */
-public class MyThreadPool implements Executor {
+public class MyThreadPool {
+    private final Thread[] threads;
     private final LinkedList<Runnable> tasks;
-    private volatile boolean running = true;
-    private final Object monitor = new Object();
+    private AtomicBoolean running;
+    private final Object monitorPoll = new Object();
+    private final Object monitorAdd = new Object();
 
     public MyThreadPool(int numThreads) {
+        threads = new Thread[numThreads];
         tasks = new LinkedList<>();
         for (int i = 0; i < numThreads; i++) {
-            new Thread(new worker()).start();
+            threads[i] = new Thread(new worker());
+            threads[i].start();
         }
+        running = new AtomicBoolean(true);
     }
 
     public void execute(Runnable task) {
-        if (running) {
-            tasks.addLast(task);
+        if (running.get()) {
+            synchronized (monitorAdd) {
+                tasks.addLast(task);
+            }
         } else {
             throw new IllegalStateException();
         }
     }
 
     public void shutdown() {
-        running = false;
+        running.set(false);
     }
 
     private final class worker implements Runnable {
         @Override
         public void run() {
-            while (running) {
+            while (running.get()) {
                 Runnable nextTask;
-                synchronized (monitor) {
+                synchronized (monitorPoll) {
                     nextTask = tasks.pollFirst();
                 }
                 if (nextTask != null) {
