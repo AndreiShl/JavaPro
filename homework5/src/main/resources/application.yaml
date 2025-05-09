@@ -10,3 +10,7 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db-init.yaml
     enabled: true
+    default-schema: hw4
+server:
+  servlet:
+    context-path: "/user-product-app"
