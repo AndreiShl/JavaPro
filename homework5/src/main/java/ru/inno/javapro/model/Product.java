@@ -19,24 +19,24 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Table(name = "product")
+@Table(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Integer id;
+    private Integer id;
 
     @Column(name = "acc_number")
-    String accNumber;
+    private String accNumber;
 
-    Double balance;
+    private Double balance;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "acc_type")
-    AccType accType;
+    private AccType accType;
 
     @ManyToOne
-    Users user;
+    private Users user;
 }

@@ -1,7 +1,7 @@
 package ru.inno.javapro.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ import ru.inno.javapro.service.UserService;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @ResponseBody
 @RestController
@@ -29,58 +29,47 @@ public class UserProductController {
 
     private final ProductService productService;
     private final UserService userService;
-    private final ModelMapper modelMapper;
 
     @GetMapping("findAllProductsByUserId")
     List<ProductDto> findAllProductsByUserId(@RequestParam Integer userId) {
-        return productService
-                .findAllProductsByUserId(userId)
-                .stream()
-                .map(product -> modelMapper.map(product, ProductDto.class))
-                .collect(Collectors.toList());
+        return productService.findAllProductsByUserId(userId);
     }
 
     @PostMapping("saveUser")
-    URI saveUser(@RequestBody UserDto userDto) {
-        Users user = userService.saveUser(modelMapper.map(userDto, Users.class));
+    ResponseEntity<Objects> saveUser(@RequestBody UserDto userDto) {
+        Users user = userService.saveUser(userDto);
 
-        return ServletUriComponentsBuilder
+        URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/UserProduct")
                 .path("/getUserById")
                 .queryParam("userId", user.getId())
                 .build()
                 .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("getUserById")
     UserDto getUserById(@RequestParam Integer userId) {
-        return modelMapper
-                .map(
-                        userService
-                                .getUser(userId)
-                                .orElseThrow(() -> new RuntimeException("No user whith id " + userId)),
-                        UserDto.class);
+        return userService.getUser(userId);
     }
 
     @PostMapping("saveUserProduct")
-    URI saveUserProduct(@RequestParam Integer userId, @RequestBody ProductDto productDto) {
-        Users user = userService.getUserById(userId).orElseThrow();
-        Product product = modelMapper.map(productDto, Product.class);
-        product.setUser(user);
-        product = productService.saveProduct(product);
+    ResponseEntity<Objects> saveUserProduct(@RequestParam Integer userId, @RequestBody ProductDto productDto) {
+        Product product = productService.saveUserProduct(userId, productDto);
 
-        return ServletUriComponentsBuilder
+        URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/UserProduct")
                 .path("/getProductById")
                 .queryParam("productId", product.getId())
                 .build()
                 .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("getProductById")
     ProductDto getProductById(Integer productId) {
-        return modelMapper.map(productService.findProductById(productId).orElseThrow(), ProductDto.class);
+        return productService.findProductById(productId);
     }
 }

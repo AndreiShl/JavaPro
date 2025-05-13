@@ -6,10 +6,10 @@ databaseChangeLog:
         - onFail: MARK_RAN
         - not:
             tableExists:
-              tableName: PRODUCT
+              tableName: products
       changes:
         - createTable:
-            tableName: PRODUCT
+            tableName: products
             remarks: "Продукты пользователя"
             columns:
               - column:

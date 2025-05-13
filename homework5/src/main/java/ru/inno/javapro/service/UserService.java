@@ -1,8 +1,10 @@
 package ru.inno.javapro.service;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.inno.javapro.model.Users;
+import ru.inno.javapro.model.dto.UserDto;
 import ru.inno.javapro.repository.UserRepository;
 
 import java.util.Optional;
@@ -12,17 +14,20 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     public Optional<Users> getUserById(int id) {
         return userRepository.findById(id);
     }
 
-    public Optional<Users> getUser(Integer id) {
-        return userRepository.findById(id);
+    public UserDto getUser(Integer id) {
+        return modelMapper.map(
+                userRepository.findById(id).orElseThrow(() -> new RuntimeException("No user whith id " + id)),
+                UserDto.class);
     }
 
-    public Users saveUser(Users user) {
-        return userRepository.save(user);
+    public Users saveUser(UserDto user) {
+        return userRepository.save(modelMapper.map(user, Users.class));
     }
 
     public void deleteUserById(Integer id) {
