@@ -24,51 +24,51 @@ import java.util.Objects;
 @ResponseBody
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/UserProduct")
+@RequestMapping("/v1")
 public class UserProductController {
 
     private final ProductService productService;
     private final UserService userService;
 
-    @GetMapping("findAllProductsByUserId")
+    @GetMapping("/product/user")
     List<ProductDto> findAllProductsByUserId(@RequestParam Integer userId) {
         return productService.findAllProductsByUserId(userId);
     }
 
-    @PostMapping("saveUser")
-    ResponseEntity<Objects> saveUser(@RequestBody UserDto userDto) {
+    @PostMapping("/user/create")
+    ResponseEntity<Void> saveUser(@RequestBody UserDto userDto) {
         Users user = userService.saveUser(userDto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/UserProduct")
-                .path("/getUserById")
+                .path("/v1")
+                .path("/user")
                 .queryParam("userId", user.getId())
                 .build()
                 .toUri();
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("getUserById")
+    @GetMapping("/user")
     UserDto getUserById(@RequestParam Integer userId) {
         return userService.getUser(userId);
     }
 
-    @PostMapping("saveUserProduct")
-    ResponseEntity<Objects> saveUserProduct(@RequestParam Integer userId, @RequestBody ProductDto productDto) {
+    @PostMapping("/product/create")
+    ResponseEntity<Void> saveUserProduct(@RequestParam Integer userId, @RequestBody ProductDto productDto) {
         Product product = productService.saveUserProduct(userId, productDto);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/UserProduct")
-                .path("/getProductById")
+                .path("/v1")
+                .path("/product")
                 .queryParam("productId", product.getId())
                 .build()
                 .toUri();
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("getProductById")
+    @GetMapping("/product")
     ProductDto getProductById(Integer productId) {
         return productService.findProductById(productId);
     }
