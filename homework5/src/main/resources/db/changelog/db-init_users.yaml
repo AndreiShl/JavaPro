@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_users_table
+      author: Andrey_Shlykov
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: USERS
+      changes:
+        - createTable:
+            tableName: USERS
+            remarks: "Пользователи проекта"
+            columns:
+              - column:
+                  name: ID
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                  remarks: "Внутренний идентификатор"
+              - column:
+                  name: USERNAME
+                  type: VARCHAR
+                  constraints:
+                    unique: true
+                    nullable: false
+                  remarks: "Имя пользователя. Уникальное, не пустое"

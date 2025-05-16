@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_product_table
+      author: Andrey_Shlykov
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: products
+      changes:
+        - createTable:
+            tableName: products
+            remarks: "Продукты пользователя"
+            columns:
+              - column:
+                  name: ID
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                  remarks: "Внутренний идентификатор"
+              - column:
+                  name: acc_number
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+                  remarks: "номер счета"
+              - column:
+                  name: balance
+                  type: float
+                  remarks: "Баланс"
+              - column:
+                  name: acc_type
+                  type: VARCHAR
+                  constraints:
+                    nullable: false
+                  remarks: "тип продукта (счет, карта)"
+              - column:
+                  name: user_id
+                  type: BIGSERIAL
+                  constraints:
+                    nullable: false
+                  remarks: "userId"
+
