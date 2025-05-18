@@ -1,0 +1,6 @@
+pay-service:
+  user-product-url: http://localhost:8080/user-product-app/v1
+server:
+  port: 8081
+  servlet:
+    context-path: "/pay-service"
