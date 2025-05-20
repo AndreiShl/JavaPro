@@ -3,6 +3,7 @@ package ru.inno.javapro.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.inno.javapro.exception.ProductNotFoundException;
 import ru.inno.javapro.model.Product;
 import ru.inno.javapro.model.Users;
 import ru.inno.javapro.model.dto.ProductDto;
@@ -36,6 +37,10 @@ public class ProductService {
     }
 
     public ProductDto findProductById(Integer productId) {
-        return modelMapper.map(productRepository.findById(productId).orElseThrow(), ProductDto.class);
+        return modelMapper.map(
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new ProductNotFoundException("Не найден продукт с идентификатором " + productId))
+                , ProductDto.class);
     }
 }
