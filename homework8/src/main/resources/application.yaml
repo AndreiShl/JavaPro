@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+  jpa:
+    database: postgresql
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db-init.yaml
+    enabled: true
+    default-schema: hw8
+server:
+  servlet:
+    context-path: "/limit-app"
+
+payment-limit:
+  payment-service-url: http://localhost:8081/pay-service/v1
+  default-limit: 100000
+  reset-limits: "0 0 0 * * *" # cron expression to run resetLimits. "0 * * * * *" - every
+  max-user-id : 100
+

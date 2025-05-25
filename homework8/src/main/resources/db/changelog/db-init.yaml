@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_limits_table
+      author: Andrey_Shlykov
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: limits
+      changes:
+        - createTable:
+            tableName: limits
+            remarks: "Лимиты пользователей"
+            columns:
+              - column:
+                  name: USER_ID
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                  remarks: "Идентификатор пользователя"
+              - column:
+                  name: payment_limit
+                  type: float
+                  remarks: "Лимит"
