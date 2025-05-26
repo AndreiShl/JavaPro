@@ -16,10 +16,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  который отсутствует в БД, создаем новую запись под него со стандартным значением лимита
  */
 @SpringBootApplication
-public class PayLimit
+public class LimitApp
 {
     public static void main( String[] args )
     {
-        SpringApplication.run(PayLimit.class, args);
+        SpringApplication.run(LimitApp.class, args);
     }
 }

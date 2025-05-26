@@ -1,24 +1,18 @@
 package ru.inno.javapro.homework8.configuration;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.inno.javapro.homework8.exception.ProcessPaymentException;
 import ru.inno.javapro.homework8.exception.TooBigClientId;
 import ru.inno.javapro.homework8.model.dto.ErrorInfo;
 
-@RestControllerAdvice
-public class PaymentExceptionHandler {
+import java.util.stream.Collectors;
 
-    /**
-     * Обработка исключений выполнения платежа
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ProcessPaymentException.class)
-    public ErrorInfo processPaymentError(ProcessPaymentException e) {
-        return new ErrorInfo("process payment has got error", e.getMessage());
-    }
+@RestControllerAdvice
+public class LimitExceptionHandler {
 
     /**
      * Обработка исключений обработки лимита
@@ -28,4 +22,16 @@ public class PaymentExceptionHandler {
     public ErrorInfo processLimitError(TooBigClientId e) {
         return new ErrorInfo("limit payment has got error", e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ErrorInfo processLimitError(ConstraintViolationException e) {
+        return new ErrorInfo("constraint violation",
+                e.getConstraintViolations()
+                .stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining(";")));
+    }
+
+
 }

@@ -13,10 +13,16 @@ databaseChangeLog:
             remarks: "Лимиты пользователей"
             columns:
               - column:
-                  name: USER_ID
+                  name: ID
                   type: BIGSERIAL
                   constraints:
                     primaryKey: true
+                  remarks: "Внутренний идентификатор"
+              - column:
+                  name: USER_ID
+                  type: BIGSERIAL
+                  constraints:
+                    unique: true
                   remarks: "Идентификатор пользователя"
               - column:
                   name: payment_limit
